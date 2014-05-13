@@ -1,4 +1,4 @@
-/* Copyright (c) 2000, 2010, Oracle and/or its affiliates. All rights reserved.
+/* Copyright (c) 2000, 2013, Oracle and/or its affiliates. All rights reserved.
 
    This program is free software; you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -23,6 +23,9 @@
 #define ALLOC_MAX_BLOCK_TO_DROP			4096
 #define ALLOC_MAX_BLOCK_USAGE_BEFORE_DROP	10
 
+/* PSI_memory_key */
+#include <mysql/psi/psi_memory.h>
+
 #ifdef __cplusplus
 extern "C" {
 #endif
@@ -30,8 +33,8 @@ extern "C" {
 typedef struct st_used_mem
 {				   /* struct for once_alloc (block) */
   struct st_used_mem *next;	   /* Next block in use */
-  size_t left;                     /* memory left in block  */
-  size_t size;                     /* size of block */
+  unsigned int	left;		   /* memory left in block  */
+  unsigned int	size;		   /* size of block */
 } USED_MEM;
 
 
@@ -51,6 +54,8 @@ typedef struct st_mem_root
   unsigned int first_block_usage;
 
   void (*error_handler)(void);
+
+  PSI_memory_key m_psi_key;
 } MEM_ROOT;
 
 #ifdef  __cplusplus
